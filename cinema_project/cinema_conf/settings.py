@@ -83,6 +83,11 @@ DATABASES = {
     }
 }
 
+DATABASES['shard_0'] = {'ENGINE': 'django.db.backends.postgresql', 'NAME': 'cinema_db', 'USER': 'cinema_user', 'PASSWORD': 'cinema_password', 'HOST': 'shard_0', 'PORT': '5432'}
+DATABASES['shard_1'] = {'ENGINE': 'django.db.backends.postgresql', 'NAME': 'cinema_db', 'USER': 'cinema_user', 'PASSWORD': 'cinema_password', 'HOST': 'shard_1', 'PORT': '5432'}
+DATABASES['shard_2'] = {'ENGINE': 'django.db.backends.postgresql', 'NAME': 'cinema_db', 'USER': 'cinema_user', 'PASSWORD': 'cinema_password', 'HOST': 'shard_2', 'PORT': '5432'}
+DATABASES['shard_3'] = {'ENGINE': 'django.db.backends.postgresql', 'NAME': 'cinema_db', 'USER': 'cinema_user', 'PASSWORD': 'cinema_password', 'HOST': 'shard_3', 'PORT': '5432'}
+
 # Настройки Django REST Framework и Swagger
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -100,4 +105,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USE_TZ = True
 
 
-DATABASE_ROUTERS = ['core.routers.ReplicaRouter']
+# DATABASE_ROUTERS = ['core.routers.ReplicaRouter']

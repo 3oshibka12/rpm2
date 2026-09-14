@@ -48,6 +48,38 @@ services:
       timeout: 5s
       retries: 20
 
+  shard_0:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cinema_db
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_password
+    ports: ["5440:5432"]
+
+  shard_1:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cinema_db
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_password
+    ports: ["5441:5432"]
+
+  shard_2:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cinema_db
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_password
+    ports: ["5442:5432"]
+
+  shard_3:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: cinema_db
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_password
+    ports: ["5443:5432"]
+
   backend:
     build: .
     container_name: cinema_backend
