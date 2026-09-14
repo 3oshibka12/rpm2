@@ -64,6 +64,25 @@ DATABASES = {
     }
 }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'cinema_db'),
+        'USER': os.environ.get('DB_USER', 'cinema_user'),
+        'PASSWORD': os.environ.get('DB_PASS', 'cinema_password'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+    },
+    'replica': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'cinema_db'),
+        'USER': os.environ.get('DB_USER', 'cinema_user'),
+        'PASSWORD': os.environ.get('DB_PASS', 'cinema_password'),
+        'HOST': os.environ.get('DB_REPLICA_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_REPLICA_PORT', '5434'),
+    }
+}
+
 # Настройки Django REST Framework и Swagger
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -79,3 +98,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Прочие системные настройки
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USE_TZ = True
+
+
+DATABASE_ROUTERS = ['core.routers.ReplicaRouter']

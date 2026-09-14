@@ -1,20 +1,52 @@
 services:
   db:
-    image: postgres:15
+    image: bitnamilegacy/postgresql:15
     container_name: cinema_db
     environment:
-      POSTGRES_DB: cinema_db
-      POSTGRES_USER: cinema_user
-      POSTGRES_PASSWORD: cinema_password
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+
+      POSTGRESQL_USERNAME: cinema_user
+      POSTGRESQL_PASSWORD: cinema_password
+      POSTGRESQL_DATABASE: cinema_db
+
+      POSTGRESQL_POSTGRES_PASSWORD: super_password
     ports:
       - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_primary_data:/bitnami/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cinema_user -d cinema_db"]
+      test: ["CMD-SHELL", "pg_isready -U cinema_user -d cinema_db -h 127.0.0.1 -p 5432"]
       interval: 3s
-      timeout: 3s
-      retries: 5
+      timeout: 5s
+      retries: 20
+
+  db_replica:
+    image: bitnamilegacy/postgresql:15
+    container_name: cinema_db_replica
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_MASTER_HOST: db
+      POSTGRESQL_MASTER_PORT_NUMBER: 5432
+
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+
+      POSTGRESQL_PASSWORD: cinema_password
+      POSTGRESQL_POSTGRES_PASSWORD: super_password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_replica_data:/bitnami/postgresql
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cinema_user -d cinema_db -h 127.0.0.1 -p 5432"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
 
   backend:
     build: .
@@ -27,11 +59,18 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      db_replica:
+        condition: service_healthy
     environment:
       - DB_HOST=db
       - DB_NAME=cinema_db
       - DB_USER=cinema_user
       - DB_PASS=cinema_password
+      - DB_PORT=5432
+
+      - DB_REPLICA_HOST=db_replica
+      - DB_REPLICA_PORT=5432
 
 volumes:
-  postgres_data:
+  postgres_primary_data:
+  postgres_replica_data:
