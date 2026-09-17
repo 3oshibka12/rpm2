@@ -63,7 +63,7 @@ def main():
     for email in emails:
         target_db = get_shard_modulo(email, 3)
         tickets_to_insert[target_db].append(Ticket(
-            showtime=shard_showtimes[target_db], # FK строго из нужной БД
+            showtime=shard_showtimes[target_db],
             customer_email=email,
             price=500.00,
             status='PAID'

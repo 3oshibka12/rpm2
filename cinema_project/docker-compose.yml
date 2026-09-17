@@ -4,20 +4,20 @@ services:
     container_name: cinema_db
     environment:
       POSTGRESQL_REPLICATION_MODE: master
-      POSTGRESQL_REPLICATION_USER: repl_user
-      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_REPLICATION_USER: ${DB_REPL_USER}
+      POSTGRESQL_REPLICATION_PASSWORD: ${DB_REPL_PASSWORD}
 
-      POSTGRESQL_USERNAME: cinema_user
-      POSTGRESQL_PASSWORD: cinema_password
-      POSTGRESQL_DATABASE: cinema_db
+      POSTGRESQL_USERNAME: ${DB_USER}
+      POSTGRESQL_PASSWORD: ${DB_PASSWORD}
+      POSTGRESQL_DATABASE: ${DB_NAME}
 
-      POSTGRESQL_POSTGRES_PASSWORD: super_password
+      POSTGRESQL_POSTGRES_PASSWORD: ${DB_SUPER_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
       - postgres_primary_data:/bitnami/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cinema_user -d cinema_db -h 127.0.0.1 -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -h 127.0.0.1 -p 5432"]
       interval: 3s
       timeout: 5s
       retries: 20
@@ -30,11 +30,11 @@ services:
       POSTGRESQL_MASTER_HOST: db
       POSTGRESQL_MASTER_PORT_NUMBER: 5432
 
-      POSTGRESQL_REPLICATION_USER: repl_user
-      POSTGRESQL_REPLICATION_PASSWORD: repl_password
+      POSTGRESQL_REPLICATION_USER: ${DB_REPL_USER}
+      POSTGRESQL_REPLICATION_PASSWORD: ${DB_REPL_PASSWORD}
 
-      POSTGRESQL_PASSWORD: cinema_password
-      POSTGRESQL_POSTGRES_PASSWORD: super_password
+      POSTGRESQL_PASSWORD: ${DB_PASSWORD}
+      POSTGRESQL_POSTGRES_PASSWORD: ${DB_SUPER_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
@@ -43,7 +43,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cinema_user -d cinema_db -h 127.0.0.1 -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME} -h 127.0.0.1 -p 5432"]
       interval: 3s
       timeout: 5s
       retries: 20
@@ -51,33 +51,33 @@ services:
   shard_0:
     image: postgres:15
     environment:
-      POSTGRES_DB: cinema_db
-      POSTGRES_USER: cinema_user
-      POSTGRES_PASSWORD: cinema_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports: ["5440:5432"]
 
   shard_1:
     image: postgres:15
     environment:
-      POSTGRES_DB: cinema_db
-      POSTGRES_USER: cinema_user
-      POSTGRES_PASSWORD: cinema_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports: ["5441:5432"]
 
   shard_2:
     image: postgres:15
     environment:
-      POSTGRES_DB: cinema_db
-      POSTGRES_USER: cinema_user
-      POSTGRES_PASSWORD: cinema_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports: ["5442:5432"]
 
   shard_3:
     image: postgres:15
     environment:
-      POSTGRES_DB: cinema_db
-      POSTGRES_USER: cinema_user
-      POSTGRES_PASSWORD: cinema_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports: ["5443:5432"]
 
   backend:
@@ -95,9 +95,9 @@ services:
         condition: service_healthy
     environment:
       - DB_HOST=db
-      - DB_NAME=cinema_db
-      - DB_USER=cinema_user
-      - DB_PASS=cinema_password
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASSWORD}
       - DB_PORT=5432
 
       - DB_REPLICA_HOST=db_replica
